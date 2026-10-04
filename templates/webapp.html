@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hotel Management</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; background: #f5f5f5; }
+  h1 { text-align: center; }
+  form { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  input, select { padding: 8px; flex: 1; }
+  button { padding: 8px 16px; background: #333; color: #fff; border: none; cursor: pointer; }
+  button:hover { background: #555; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+  .available { color: green; }
+  .occupied { color: red; }
+  .del { background: #a33; }
+</style>
+</head>
+<body>
+
+<h1>Hotel Room Manager</h1>
+
+<form id="form">
+  <input id="number" placeholder="Room number" required>
+  <select id="type">
+    <option>Standard</option>
+    <option>Deluxe</option>
+    <option>Suite</option>
+  </select>
+  <input id="guest" placeholder="Guest name (optional)">
+  <button type="submit">Add Room</button>
+</form>
+
+<table>
+  <thead>
+    <tr><th>Room</th><th>Type</th><th>Guest</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody id="rooms"></tbody>
+</table>
+
+<script>
+  let rooms = [];
+
+  const form = document.getElementById('form');
+  const tbody = document.getElementById('rooms');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const number = document.getElementById('number').value;
+    const type = document.getElementById('type').value;
+    const guest = document.getElementById('guest').value;
+
+    rooms.push({
+      number,
+      type,
+      guest,
+      status: guest ? 'Occupied' : 'Available'
+    });
+
+    form.reset();
+    render();
+  });
+
+  function toggleStatus(i) {
+    rooms[i].status = rooms[i].status === 'Available' ? 'Occupied' : 'Available';
+    render();
+  }
+
+  function deleteRoom(i) {
+    rooms.splice(i, 1);
+    render();
+  }
+
+  function render() {
+    tbody.innerHTML = rooms.map((r, i) => `
+      <tr>
+        <td>${r.number}</td>
+        <td>${r.type}</td>
+        <td>${r.guest || '-'}</td>
+        <td class="${r.status.toLowerCase()}">${r.status}</td>
+        <td>
+          <button onclick="toggleStatus(${i})">Toggle</button>
+          <button class="del" onclick="deleteRoom(${i})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  render();
+</script>
+
+</body>
+</html>
